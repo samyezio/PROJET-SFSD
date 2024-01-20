@@ -13,7 +13,7 @@ typedef struct Etudiant{
    char file_name[100];
    char file_extension[30];
    int nb_element;
- }file_header;
+ }entete_fichier;
 typedef struct block_entete{
     size_t block_size;
     int nb_block_element;
@@ -98,12 +98,17 @@ void search (char *file_path, char *mat){
 
         }
 
-
-
-
     }
    
+   /*void supprimer(char *file_path,char *mat){
+   FILE *fichier = fopen(file_path,"r+b"); //ouvrir le fichier en mode lecture ecriture binaire.
+   struct entete_fichier entete;
+   struct block_entete block;
+   fread(&entete,sizeof(entete_fichier),1,fichier); //recuperer l'entete de notre fichier (les informations).
+   struct Etudiant T[entete.nb_element];  //un tableau pour stocker les enregistrement .
 
+
+   }*/
 
 
 
