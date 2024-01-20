@@ -69,27 +69,36 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
     for (int i =0 ;i < n ; i=i+facteur_blockage){
         int facteur;
         if (i + facteur_blockage > n ){
-            facteur= facteur_blockage
+
+            facteur= facteur_blockage  // Ajustement du facteur
              while (i + facteur > n ) 
-        {
+        {                            
            facteur--;    
         } 
+
         block.nb_block_element= facteur;
         }
         else{
             facteur=facteur_blockage;
             block.nb_block_element=facteur_blockage;
-
         }
-        block.block_size = sizeof(Etudiant) * facteur_blockage;
-        size_t block_memory_size = sizeof(block_header) + block.block_size;
-        buffer = malloc(block_memory_size);
-        memcpy( buffer , &block , sizeof(block_header) );
-        memcpy (buffer + sizeof (block_header),(Etudiant *)T+i,sizeof (Etudiant)*facteur);
-        fwrite (buffer,block_memory_size,1,file);
+        block.block_size = sizeof(Etudiant) * facteur_blockage; // calcul de la taille du bloc
+        size_t block_memory_size = sizeof(block_entete) + block.block_size; // calcul de la taille totale du bloc en memoire
+        buffer = malloc(block_memory_size); // allocation de mémoire pour le buffer
+        memcpy( buffer , &block , sizeof(block_entete) ); // copie de la structure block_entete dans le buffer
+        memcpy (buffer + sizeof (block_entete),(Etudiant *)T+i,sizeof (Etudiant)*facteur); // Copie des données d'etudiants dans le tampon
+        fwrite (buffer,block_memory_size,1,file); // ecriture du buffer  dans le fichier
         free(buffer);
         
     }
+    fseek (file , 0, SEEK_SET); // Positionnement au debut du fichier
+    fread (&entete,sizeof(entete_fichier),1,file); // Lecture de l entête actuel du fichier
+    entete.nb_element= entete.nb_element + n; // Mise à jour du nombre total d'éléments
+    fseek (file,0,SEEK_END); // Positionnement à la fin du fichier pour obtenir la taille actuelle
+    entete.file_size = ftell(file); // Mise a jour de la taille totale du fichier dans l'entête
+    fseek (file,0,SEEK_SET); // Repositionnement au début du fichier
+    fwrite (&entete, sizeof(entete_fichier),1,file); // ecriture de l'entête mis à jour dans le fichier
+    fclose(file);
 
 }
 
