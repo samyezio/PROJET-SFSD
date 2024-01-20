@@ -21,6 +21,43 @@ typedef struct block_entete{
     char data_type[50];
 }block_entete;
 
+void creefichier(char *nomfichier,char *extension){
+    char *nomfichiercomplet=malloc(strlen(name) + strlen(extension)+2);
+    strcpy(nomfichiercomplet,nomfichier);
+    strcpy(nomfichiercomplet,extension);
+    FILE *fichier=fopen(nomfichiercomplet,"wb");
+    entete_fichier entete;
+    strcpy(entete.file_name,nomfichier);
+    strcpy(entete.file_extension,extension);
+    entete.file_size=sizeof(entete_fichier);
+    entete.nb_element=0;
+    fwrite(&entete,sizeof(entete_fichier),1,fichier);
+    fclose(fichier);
+    free(nomfichiercomplet);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n){
     FILE *file= fopen(file_path,"r+b");
     fseek(file,0,SEEK_END);
