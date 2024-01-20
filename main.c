@@ -39,15 +39,21 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage,n){
             facteur= facteur_blockage
              while (i + facteur > n ) 
         {
-           facteur--;    
+           --facteur;    // changement2
         } 
         block.nb_block_element= facteur;
         }
         else{
             facteur=facteur_blockage;
             block.nb_block_element=facteur_blockage;
-
         }
+        block.block_size = sizeof(Etudiant) * facteur_blockage;
+        size_t block_memory_size = sizeof(block_header) + block.block_size;
+        buffer = malloc(block_memory_size);
+        memcpy( buffer , &block , sizeof(block_header) );
+        memcpy (buffer + sizeof (block_header),(Etudiant *)T+i,sizeof (Etudiant)*facteur);
+        fwrite (buffer,block_memory_size,1,file);
+        free(buffer);
         
        
 
