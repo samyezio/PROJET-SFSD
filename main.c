@@ -21,7 +21,7 @@ typedef struct block_entete{
     char data_type[50];
 }block_entete;
 
-void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage,n){
+void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n){
     FILE *file= fopen(file_path,"r+b");
     fseek(file,0,SEEK_END);
     block_entete block;
