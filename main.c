@@ -170,14 +170,19 @@ void read_element(Etudiant x){
 
 void search (char *file_path, char *mat){
     FILE *fic=fopen(*file_path,"rb");
+
     entete_fichier Ftete;
     fread(&Ftete,sizeof(entete_fichier),1,fic);
-    Etudiant T[Ftete.nb_element]; 
+    Etudiant T[Ftete.nb_element];//On crée un tableau dont la taille correspond aux éléments du fichier, pour stocker les éléments avant de les vérifier
+
     block_entete Tbloc;
     int trouver =0,  i=0 ,c ,j;
-    while(fread(&Tbloc,sizeof(block_entete),1,fic)> 0 && trouver == 0){
+
+    while(fread(&Tbloc,sizeof(block_entete),1,fic)> 0 && trouver == 0)//On vérifie s'il existe encore des blocs au cas où on n'aurait pas trouvé l'étudiant cible
+    {
         if(Tbloc.nb_block_element!=0){
-            fread(T+i,sizeof(Etudiant),Tbloc.nb_block_element,fic){
+            fread(T+i,sizeof(Etudiant),Tbloc.nb_block_element,fic)//On place les éléments du block dans le tableau pour les vérifier
+            {
                 c=Tbloc.nb_block_element;
                 j=i;
                 while(c>0 && trouver==0){
@@ -188,18 +193,32 @@ void search (char *file_path, char *mat){
                     }
                i=i+Tbloc.nb_block_element;     
 
-
-
+                if(Tbloc.nb_block_element != Tbloc.facteur_blockage)//verifi si il y des element vide dans le bloc
+                    {
+                        int vide=Tbloc.facteur_blockage - Tbloc.nb_block_element;
+                        fseek(fic,sizeof(Etudiant)*vide, SEEK_CUR);
+            
+                    }
             }
-
-
-
-
         }
-
+        else//au cas où le bloc est vide
+        {
+            fseek(fic,sizeof(Etudiant) * Tbloc.facteur_blockage, SEEK_CUR);
+        }
     }
    
-   /*void supprimer(char *file_path,char *mat){
+    if(trouver==0)//Au cas où l'élément n'existe pas
+    {
+        printf("\n -L'élément n'existe pas. \n")
+    }
+    fclose(fic);
+
+}
+
+
+
+
+  /*void supprimer(char *file_path,char *mat){
    FILE *fichier = fopen(file_path,"r+b"); //ouvrir le fichier en mode lecture ecriture binaire.
    struct entete_fichier entete;
    struct block_entete block;
@@ -208,12 +227,6 @@ void search (char *file_path, char *mat){
 
 
    }*/
-
-
-
-
-}
-
 
 int main ()
 {
