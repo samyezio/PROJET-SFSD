@@ -102,6 +102,59 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
 
 }
 
+      void read_file (char * file_path){
+        FILE *file = fopen(file_path,"rb");
+        entete_fichier myentete;
+        fread (&myentete,sizeof(entete_fichier),1,file);
+        Etudiant T[entete.nb_element];
+        block_entete myblock;
+        int i =0;
+        while (fread(&myblock,sizeof(block_entete),1,file)>0)
+        {
+            if(myblock.nb_block_element != 0 ){                               //
+                fread( T+i ,sizeof(Etudiant),myblock.nb_block_element,file); // Lecture des elements du bloc
+                i = i + myblock.nb_block_element;                           //
+            }
+        }
+         
+       for (int j = 0; j < header_file.nb_element; j++)
+       {
+            read_element(T[j]);
+       }
+        
+
+      fclose(file);
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void read_element(Etudiant x){
