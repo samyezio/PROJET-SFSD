@@ -39,25 +39,6 @@ void creefichier(char *nomfichier,char *extension){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n){
     FILE *file= fopen(file_path,"r+b");
     fseek(file,0,SEEK_END);
@@ -73,7 +54,7 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
             facteur= facteur_blockage  // Ajustement du facteur
              while (i + facteur > n ) 
         {                            
-           facteur--;    
+           --facteur;    
         } 
 
         block.nb_block_element= facteur;
@@ -130,31 +111,6 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
 
 
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void read_element(Etudiant x){
