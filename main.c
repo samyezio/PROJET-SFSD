@@ -51,7 +51,7 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
         int facteur;
         if (i + facteur_blockage > n ){
 
-            facteur= facteur_blockage  // Ajustement du facteur
+            facteur= facteur_blockage;  // Ajustement du facteur
              while (i + facteur > n ) 
         {                            
            --facteur;    
@@ -137,14 +137,14 @@ void search (char *file_path, char *mat){
     while(fread(&Tbloc,sizeof(block_entete),1,fic)> 0 && trouver == 0)//On vérifie s'il existe encore des blocs au cas où on n'aurait pas trouvé l'étudiant cible
     {
         if(Tbloc.nb_block_element!=0){
-            fread(T+i,sizeof(Etudiant),Tbloc.nb_block_element,fic)//On place les éléments du block dans le tableau pour les vérifier
+            fread(T+i,sizeof(Etudiant),Tbloc.nb_block_element,fic);//On place les éléments du block dans le tableau pour les vérifier
             {
                 c=Tbloc.nb_block_element;
                 j=i;
                 while(c>0 && trouver==0){
                     if(strcmp(T[j].matricule,mat)==0){
                         trouver=1;
-                        read_element(t[j]);
+                        read_element(T[j]);
                     }j++;  c--;
                     }
                i=i+Tbloc.nb_block_element;     
@@ -165,7 +165,7 @@ void search (char *file_path, char *mat){
    
     if(trouver==0)//Au cas où l'élément n'existe pas
     {
-        printf("\n -L'élément n'existe pas. \n")
+        printf("\n -L'élément n'existe pas. \n");
     }
     fclose(fic);
 
@@ -226,7 +226,7 @@ void supprimer(char *file_path,char *mat){
     --entete.nb_element;
     entete.file_size=ftell(fichier);
     fseek(fichier,0,SEEK_SET);
-    fwrite(&entete,sizeof(entete_fichier),1,file);
+    fwrite(&entete,sizeof(entete_fichier),1,fichier);
     }
     fclose(fichier);
        }
