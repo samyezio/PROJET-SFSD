@@ -82,6 +82,12 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
     fclose(file);
 
 }
+void read_element(Etudiant x){
+
+    printf("matricule) : %s \n",x.matricule);
+    printf("nom / prenom : %s / %s \n",x.nom,x.prenom);
+    printf("moyenne : %s \n",x.moyenne);
+}
 
       void read_file (char * file_path){
         FILE *file = fopen(file_path,"rb");
@@ -96,7 +102,7 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
                 fread( T+i ,sizeof(Etudiant),myblock.nb_block_element,file); // Lecture des elements du bloc
                 i = i + myblock.nb_block_element;                           //
                 
-                if (myblockl.facteur_blockage != myblock.nb_block_element)  // Gestion des blocs partiels
+                if (myblock.facteur_blockage != myblock.nb_block_element)  // Gestion des blocs partiels
                 {
                     fseek(file,(myblock.facteur_blockage - myblock.nb_block_element)*sizeof(Etudiant),SEEK_CUR);
 
@@ -109,7 +115,7 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
         }
          
 
-       for (int j = 0; j < header_file.nb_element; j++)
+       for (int j = 0; j < myentete.nb_element; j++)
        {
             read_element(T[j]);
        }
@@ -120,19 +126,11 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
       }
 
 
-void read_element(Etudiant x){
-
-    printf("matricule) : %s \n",x.matricule);
-    printf("nom / prenom : %s / %s \n",x.nom,x.prenom);
-    printf("moyenne : %s \n",x.moyenne);
-}
-
-
 
 
 
 void search (char *file_path, char *mat){
-    FILE *fic=fopen(*file_path,"rb");
+    FILE *fic=fopen(file_path,"rb");
 
     entete_fichier Ftete;
     fread(&Ftete,sizeof(entete_fichier),1,fic);
