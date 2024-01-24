@@ -24,7 +24,7 @@ typedef struct block_entete{
 void creefichier(char *nomfichier,char *extension){
     char *nomfichiercomplet=malloc(strlen(nomfichier) + strlen(extension)+2);
     strcpy(nomfichiercomplet,nomfichier);
-    strcpy(nomfichiercomplet,extension);
+    strcat(nomfichiercomplet,extension);
     FILE *fichier=fopen(nomfichiercomplet,"wb");
     entete_fichier entete;
     strcpy(entete.file_name,nomfichier);
@@ -68,10 +68,9 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
         buffer = malloc(block_memory_size); // allocation de mémoire pour le buffer
         memcpy( buffer , &block , sizeof(block_entete) ); // copie de la structure block_entete dans le buffer
         memcpy (buffer + sizeof (block_entete),(Etudiant *)T+i,sizeof (Etudiant)*facteur); // Copie des données d'etudiants dans le tampon
-        fwrite (buffer,block_memory_size,1,file); // ecriture du buffer  dans le fichier
-        free(buffer);
-        
+        fwrite (buffer,block_memory_size,1,file); // ecriture du buffer  dans le fichier   
     }
+    free(buffer);
     fseek (file , 0, SEEK_SET); // Positionnement au debut du fichier
     fread (&entete,sizeof(entete_fichier),1,file); // Lecture de l entête actuel du fichier
     entete.nb_element= entete.nb_element + n; // Mise à jour du nombre total d'éléments
@@ -84,10 +83,12 @@ void insertion_block (char *file_path, Etudiant *T ,int facteur_blockage, int n)
 }
 void read_element(Etudiant x){
 
-    printf("matricule) : %s \n",x.matricule);
-    printf("nom / prenom : %s / %s \n",x.nom,x.prenom);
-    printf("moyenne : %s \n",x.moyenne);
-}
+   printf("nom : %s\n", x.nom);
+  printf("preom : %s\n",x.prenom);
+  printf("Matricule : %s\n", x.matricule);
+  printf("moyenne : %f\n", x.moyenne);
+    }
+
 
       void read_file (char * file_path){
         FILE *file = fopen(file_path,"rb");
@@ -143,7 +144,7 @@ void search (char *file_path, char *mat){
     {
         if(Tbloc.nb_block_element!=0){
             fread(T+i,sizeof(Etudiant),Tbloc.nb_block_element,fic);//On place les éléments du block dans le tableau pour les vérifier
-            {
+            
                 c=Tbloc.nb_block_element;
                 j=i;
                 while(c>0 && trouver==0){
@@ -160,7 +161,7 @@ void search (char *file_path, char *mat){
                         fseek(fic,sizeof(Etudiant)*vide, SEEK_CUR);
             
                     }
-            }
+            
         }
         else//au cas où le bloc est vide
         {
@@ -201,7 +202,7 @@ void supprimer(char *file_path,char *mat){
             memcpy(buff,&block,sizeof(block_entete));
             if(i==j){//si on supprime le 1 er element du block courrant 
                 memcpy(buff+sizeof(block_entete),T + (i+1),sizeof(Etudiant)*(block.nb_block_element));
-            }else if(j==(i+block.nb_block_element)){
+            }else if(j==(i+block.nb_block_element-1)){
                 //si l'element est dans le dernier enregistrement du bloc courrant 
                 memcpy(buff+sizeof(block_entete),T + i,sizeof(Etudiant)*(block.nb_block_element));
 
@@ -241,6 +242,28 @@ void supprimer(char *file_path,char *mat){
 
 int main ()
 {
+ char* file_name = "student";
+char* file_ext = ".bin";
+creefichier(file_name,file_ext);
+int n = 2;
+Etudiant T[10];
+for(int i =0;i<n;i++){
+    printf("\nmat : ");
+    scanf("%s",T[i].matricule);
+     printf("\nnom : ");
+    scanf("%s",T[i].nom);
+     printf("\nprenom : ");
+    scanf("%s",T[i].prenom);
+     printf("\nmoy : ");
+    scanf("%f",&T[i].moyenne);
 
+}
+printf("\n");
+insertion_block("student.bin",T,4,n);
+read_file("student.bin");
+printf("before call");
+printf("\n");
+supprimer("student.bin","3");
+read_file("student.bin");
     return 0 ;
 }
