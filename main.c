@@ -22,7 +22,7 @@ typedef struct block_entete{
 }block_entete;
 
 void creefichier(char *nomfichier,char *extension){
-    char *nomfichiercomplet=malloc(strlen(name) + strlen(extension)+2);
+    char *nomfichiercomplet=malloc(strlen(nomfichier) + strlen(extension)+2);
     strcpy(nomfichiercomplet,nomfichier);
     strcpy(nomfichiercomplet,extension);
     FILE *fichier=fopen(nomfichiercomplet,"wb");
@@ -171,18 +171,68 @@ void search (char *file_path, char *mat){
 
 }
 
-
-
-
-  /*void supprimer(char *file_path,char *mat){
+void supprimer(char *file_path,char *mat){
    FILE *fichier = fopen(file_path,"r+b"); //ouvrir le fichier en mode lecture ecriture binaire.
    struct entete_fichier entete;
    struct block_entete block;
    fread(&entete,sizeof(entete_fichier),1,fichier); //recuperer l'entete de notre fichier (les informations).
    struct Etudiant T[entete.nb_element];  //un tableau pour stocker les enregistrement .
+   int i=0,j,cx;
+   int trouv=0;//faux 
+   long offset;//variable pour stocker le decalage pour fseek
+   
+   while(fread(&block,sizeof(block_entete),1,fichier)>0 && trouv==0){//parcours du fichier
+    if(block.nb_block_element !=0){
+      //on met les donnees du bloc dans le tableau T
+       fread(T+i,sizeof(Etudiant),block.nb_block_element,fichier);
+       offset=sizeof(block_entete)+sizeof(Etudiant)*(block.nb_block_element);//recupere la taille du bloc
+       j=i;
+       cx=block.nb_block_element;//on parcourit le tableau qui contient les enregistrement du bloc 
+       while(cx>0){
+        if(strcmp(mat,T[j].matricule)==0){
+            trouv=1;
+            --block.nb_block_element;
+            void *buff=malloc(sizeof(block_entete)+sizeof(Etudiant)*(block.facteur_blockage));
+            memcpy(buff,&block,sizeof(block_entete));
+            if(i==j){//si on supprime le 1 er element du block courrant 
+                memcpy(buff+sizeof(block_entete),T + (i+1),sizeof(Etudiant)*(block.nb_block_element));
+            }else if(j==(i+block.nb_block_element)){
+                //si l'element est dans le dernier enregistrement du bloc courrant 
+                memcpy(buff+sizeof(block_entete),T + i,sizeof(Etudiant)*(block.nb_block_element));
+
+            }else {
+                memcpy(buff + sizeof(block_entete), T + i, sizeof(Etudiant) * (j - i + 1));//copy les element avant l'element
+                memcpy(buff + sizeof(block_entete) + sizeof(Etudiant) * (j + i + 1),  T + j + 1, sizeof(Etudiant) * (block.nb_block_element - j));//apres l'element
+            }
+            fseek(fichier,-offset,SEEK_CUR);//deplace le pointeur de fichier a la position pour ecrire le tampon modifie
+            fwrite(buff,sizeof(block_entete)+sizeof(Etudiant)*(block.facteur_blockage),1,fichier);
+            free(buff);
+            break;
+        }
+        --cx;
+        ++j;
+       }
+    }else{
+         //passe au bloc suivant si le bloc actuel est vide
+         fseek(fichier,sizeof(Etudiant)*(block.facteur_blockage),SEEK_CUR);
+    }
+    i=i+block.nb_block_element;
+
+        }
+    if(trouv==0){
+        printf("ce element n'existe pas.");
+    }else{
+    fseek(fichier,0,SEEK_END);
+    --entete.nb_element;
+    entete.file_size=ftell(fichier);
+    fseek(fichier,0,SEEK_SET);
+    fwrite(&entete,sizeof(entete_fichier),1,file);
+    }
+    fclose(fichier);
+       }
 
 
-   }*/
+  
 
 int main ()
 {
